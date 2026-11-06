@@ -189,36 +189,37 @@ textarea { width: 100%; box-sizing: border-box; min-height: 90px; margin-top: 10
    ================================================================ */
 const CFG = {
   /* taban fiyat (Bölüm 1 tezgâhı). Dönem çarpanı ile büyür. İşlenmiş ürün belirgin daha kârlı. */
-  price: { hamsi: 3, temiz: 7, tuzlu: 13, tutsu: 24, yascay: 4, kurucay: 30, findik: 5, kavrulmus: 34 },
-  era: [0, 1, 1.3, 1.7],     // bölüm başına fiyat çarpanı (köy → büyüyen köy → kasaba)
+  price: { hamsi: 3, temiz: 7, tuzlu: 13, tutsu: 24, yascay: 4, kurucay: 30, findik: 5, kavrulmus: 34, sut: 6, peynir: 44, petek: 10, bal: 40 },
+  era: [0, 1, 1.3, 1.7, 2.2],   // bölüm başına fiyat çarpanı (köy → büyüyen köy → kasaba → yayla sezonu)
   muhur: 1.5,                // elle yapılmış (mühürlü) mal çarpanı
   koli: { per: 5, mul: 2.0, muhur: 1.3 },   // koli: 5 ürün; toptancı birim başına tezgâhın 2 katı öder
-  fishTime: 1.1,
   payTime: 1.4,              // ödeme karesi dolma süresi
   facCap: 20, handCap: 6,    // tesis girdisi / çıktısı; el bölmesi yalnız oyuncunun
   shelfCap: 20, pileCap: 40,
-  cap: [6, 10, 14],          // sepet: başlangıç, hasır küfe, büyük küfe
+  cap: [8, 16, 24],          // sepet: başlangıç, hasır küfe, büyük küfe (sırtta yığın olarak görünür)
   speed: 3.6,
   serveTime: 0.35, patience: 34,
   boatTrip: 9, boatCatch: 6,
-  worker: { cap: [0, 6, 8, 10], speed: 2.5 },   // işçinin bir seferde taşıdığı (bölümle artar)
-  grow: { yascay: 7, findik: 11 },
-  treeNuts: 3,
+  worker: { cap: [0, 6, 8, 10, 12], speed: 2.5 },   // işçinin bir seferde taşıdığı (bölümle artar)
+  grow: { yascay: 7, findik: 11, hamsi: 9, sut: 9, petek: 12 },   // hamsi: sığlıktaki sürünün yeniden belirmesi
+  treeNuts: { findik: 3, sut: 2, petek: 2 },   // ağaç / inek / kovan başına bir olgunlukta verilen
   tutsu2: 2, tuz2: 1.1, boat2: 2,   // ikinci tütsü ocağı süreyi yarıya indirir; ikinci tekne avı ikiye katlar
-  pop: { start: 40, yali: 6, ev1: 12, ev2: 12, ocak: 10, kasaba: 40, market: 20, festival: 30 },
+  pop: { start: 40, yali: 6, ev1: 12, ev2: 12, ocak: 10, kasaba: 40, market: 20, festival: 30, yev: 15, senlik: 30 },
   zoneCost: {
     ayik: 30, kufe: 60, nazmiye: 90, tuz: 150, temel: 220, fadime: 280, tutsu: 380, hamdi: 420, idris: 520, kufe2: 300, yali: 1200,
     cay1: 600, fabrika: 1200, ev1: 1800, zehra: 2200, cay2: 2800, kazim: 3200, tutsu2: 2600, ev2: 3800, ocak: 6000,
     rampa: 5000, paket: 6500, findik: 7500, kavurma: 9000, husnu: 9500, tekne2: 8000, market: 12000, cafer: 12000, festival: 30000,
+    yolu: 15000, ahir: 18000, mandira: 22000, murat: 24000, kovan: 26000, suzme: 28000, dursun: 30000, yev: 32000, senlik: 60000,
   },
   /* büyüme kapısı: bölüm sonu binası elle yapılmış mal da ister */
-  zoneGoods: { yali: { "tutsu*": 3 }, ocak: { "kurucay*": 4 }, festival: { "koli_tutsu*": 2 } },
+  zoneGoods: { yali: { "tutsu*": 3 }, ocak: { "kurucay*": 4 }, festival: { "koli_tutsu*": 2 }, senlik: { "peynir*": 4 } },
 };
-const PRODUCTS = ["hamsi", "temiz", "tuzlu", "tutsu", "yascay", "kurucay", "findik", "kavrulmus"];
-const KOLIS = ["koli_tutsu", "koli_kurucay", "koli_kavrulmus"];
+const PRODUCTS = ["hamsi", "temiz", "tuzlu", "tutsu", "yascay", "kurucay", "findik", "kavrulmus", "sut", "peynir", "petek", "bal"];
+const KOLIS = ["koli_tutsu", "koli_kurucay", "koli_kavrulmus", "koli_peynir", "koli_bal"];
 const NAMES = { hamsi: "Hamsi", temiz: "Temiz hamsi", tuzlu: "Tuzlu hamsi", tutsu: "Tütsülü hamsi", yascay: "Yaş çay", kurucay: "Kuru çay", findik: "Fındık", kavrulmus: "Kavrulmuş fındık",
-  koli_tutsu: "Koli tütsülü", koli_kurucay: "Koli çay", koli_kavrulmus: "Koli fındık" };
-const SHORT = { hamsi: "HAMSİ", temiz: "TEMİZ", tuzlu: "TUZLU", tutsu: "TÜTSÜLÜ", yascay: "YAŞ ÇAY", kurucay: "KURU ÇAY", findik: "FINDIK", kavrulmus: "KAVRULMUŞ" };
+  koli_tutsu: "Koli tütsülü", koli_kurucay: "Koli çay", koli_kavrulmus: "Koli fındık",
+  sut: "Süt", peynir: "Yayla peyniri", petek: "Petek", bal: "Yayla balı", koli_peynir: "Koli peynir", koli_bal: "Koli bal" };
+const SHORT = { hamsi: "HAMSİ", temiz: "TEMİZ", tuzlu: "TUZLU", tutsu: "TÜTSÜLÜ", yascay: "YAŞ ÇAY", kurucay: "KURU ÇAY", findik: "FINDIK", kavrulmus: "KAVRULMUŞ", sut: "SÜT", peynir: "PEYNİR", petek: "PETEK", bal: "BAL" };
 const base = k => k.replace("*", "");
 const isH = k => k.endsWith("*");
 const koliOf = k => "koli_" + k;
@@ -230,20 +231,23 @@ const FAC = {
   tuz:     { ch: 1, name: "TUZLAMA", inK: "temiz", outK: "tuzlu", ratio: 1, time: 1.5, r: { x: 5.6, y: 5.6, w: 2.0, h: 1.0 }, inAt: [5.5, 7.3], outAt: [7.7, 7.3] },
   tutsu:   { ch: 1, name: "TÜTSÜHANE", inK: "tuzlu", outK: "tutsu", ratio: 1, time: 2.2, r: { x: 5.2, y: 8.6, w: 2.2, h: 1.5 }, inAt: [4.9, 10.8], outAt: [7.7, 10.8] },
   fabrika: { ch: 2, name: "ÇAY FABRİKASI", inK: "yascay", outK: "kurucay", ratio: 2, time: 1.3, r: { x: 20.2, y: 5.8, w: 1.6, h: 1.6 }, inAt: [19.9, 8.2], outAt: [21.7, 8.2] },
+  mandira: { ch: 4, name: "MANDIRA", inK: "sut", outK: "peynir", ratio: 2, time: 1.6, r: { x: 7.6, y: 21.8, w: 1.8, h: 1.4 }, inAt: [7.4, 23.8], outAt: [9.6, 23.8] },
+  suzme:   { ch: 4, name: "BAL SÜZME", inK: "petek", outK: "bal", ratio: 2, time: 1.5, r: { x: 18.0, y: 21.8, w: 1.6, h: 1.3 }, inAt: [17.8, 23.7], outAt: [19.9, 23.7] },
   kavurma: { ch: 3, name: "KAVURMA OCAĞI", inK: "findik", outK: "kavrulmus", ratio: 2, time: 1.4, r: { x: 8.2, y: 15.2, w: 1.5, h: 1.2 }, inAt: [8.0, 17.1], outAt: [10.0, 17.1] },
 };
-const FAC_OF = { temiz: "ayik", tuzlu: "tuz", tutsu: "tutsu", kurucay: "fabrika", kavrulmus: "kavurma" };
+const FAC_OF = { temiz: "ayik", tuzlu: "tuz", tutsu: "tutsu", kurucay: "fabrika", kavrulmus: "kavurma", peynir: "mandira", bal: "suzme" };
 
 /* ---- harita (kare koordinatı) ----
    Deniz kuzeyde (y < 0), çay yamacı batıda (x < 0). Sahil yolu y 12–13 boydan boya.
    Bölüm 1: köy merkezi (x 0–16). Bölüm 2: doğuda çay bahçeleri ve fabrika (x 16–23). Bölüm 3: yolun güneyi kasaba (y 14–20). */
 const ROAD = [12, 13];
 const mapW = () => !S || S.chapter < 2 ? 16 : 23;
-const mapH = () => !S || S.chapter < 3 ? 14 : 20;
+const mapH = () => !S || S.chapter < 3 ? 14 : S.chapter >= 4 && S.unl.yolu ? 27 : 20;
 const L = {
   start: [9.6, 6.4],
   iskele: { x: 9.0, w: 1.0, y0: -4.2, y1: 0.6 },
-  fishSpot: [9.5, -2.7], dock: [10.75, -2.9], sea: [15.5, -9],
+  shoal: { x: 11.3, y: -1.9, w: 4.2, h: 1.75 },   // sığlık: hamsi sürüsü vurur, içinden geçerek toplanır
+  fishSpot: [13.4, -0.9], dock: [10.75, -2.9], sea: [15.5, -9],
   pile: [11.1, 1.3],
   stall: { x: 9.6, y: 9.6, w: 3.0, h: 0.8 },
   sat: [11.1, 8.9], cash: [8.9, 9.0], nazmiyeAt: [10.3, 9.05],
@@ -258,12 +262,19 @@ const L = {
   paket: { x: 12.2, y: 14.8, w: 2.2, h: 1.4 }, paketIn: [12.0, 16.9], paketOut: [14.6, 16.9],
   rampa: { x: 17.2, y: 15.0, w: 2.4, h: 1.0 }, rampaAt: [18.4, 16.7], truck: [18.4, 12.55],
   festival: { x: 19.9, y: 15.1, w: 2.6, h: 1.6 },
+  // Bölüm 4: yayla (kasabanın güneyi, y 21–27)
+  ahir: { x: 2.0, y: 21.6, w: 2.6, h: 1.6 },
+  cows: [[1.5, 24.8], [3.0, 25.3], [4.5, 24.8], [6.0, 25.3], [2.2, 26.3], [5.2, 26.3]],
+  hives: [[14.0, 23.4], [15.0, 23.4], [16.0, 23.4], [14.0, 25.0], [15.0, 25.0], [16.0, 25.0]],
+  yev: { x: 10.6, y: 24.0, w: 2.4, h: 1.8 },
+  senlik: { x: 19.8, y: 24.6, w: 2.6, h: 1.4 },
   sign: [15.6, 11.4],
   zones: {
     ayik: [6.9, 3.6], kufe: [12.1, 7.7], nazmiye: [13.4, 9.0], tuz: [6.6, 7.3], temel: [11.1, 1.3],
     fadime: [4.4, 2.6], tutsu: [6.3, 10.8], hamdi: [4.0, 5.2], idris: [3.6, 9.4], kufe2: [12.1, 7.7], yali: [13.9, 5.5],
     cay1: [18.3, 2.4], fabrika: [20.8, 8.2], ev1: [17.3, 11.1], zehra: [16.0, 3.3], cay2: [18.3, 5.2], kazim: [22.3, 9.6], ev2: [19.7, 11.1], ocak: [14.9, 9.6], tutsu2: [3.0, 11.2], tekne2: [12.6, 1.0],
     rampa: [18.4, 16.7], paket: [13.3, 16.9], findik: [4.0, 16.6], kavurma: [9.0, 17.1], husnu: [1.0, 16.6], market: [8.6, 11.0], cafer: [16.2, 17.4], festival: [21.2, 18.4],
+    yolu: [11.5, 19.6], ahir: [3.3, 23.6], mandira: [8.5, 23.8], murat: [0.9, 23.8], kovan: [15.0, 24.2], suzme: [18.85, 23.7], dursun: [13.0, 22.6], yev: [11.8, 26.35], senlik: [21.1, 26.45],
   },
 };
 const ZONE_TITLES = {
@@ -271,6 +282,7 @@ const ZONE_TITLES = {
   fadime: "Fadime", tutsu: "Tütsühane", hamdi: "Hamdi", idris: "İdris Usta", kufe2: "Büyük küfe", yali: "Yalı evi",
   cay1: "Çay bahçesi", fabrika: "Çay fabrikası", ev1: "Köy evi", zehra: "Zehra", cay2: "İkinci çay terası", kazim: "Kazım Usta", tutsu2: "İkinci tütsü ocağı", ev2: "Köy evi", ocak: "Çay ocağı", tekne2: "İkinci tekne",
   rampa: "Yükleme rampası", paket: "Pakethane", findik: "Fındık bahçesi", kavurma: "Kavurma ocağı", husnu: "Hüsnü", market: "Faroz Market", cafer: "Şoför Cafer", festival: "Hamsi Festivali",
+  yolu: "Yayla yolu", ahir: "Ahır ve inekler", mandira: "Mandıra", murat: "Çoban Murat", kovan: "Arı kovanları", suzme: "Bal süzmehanesi", dursun: "Arıcı Dursun", yev: "Dayının yayla evi", senlik: "Yayla şenliği",
 };
 
 /* ================================================================
@@ -287,19 +299,21 @@ const PEOPLE = {
   zehra:   { name: "Zehra", role: "Fadime'nin kızı · çay toplayıcı", skin: "#ecbd94", scarf: "#4f7a34", body: "#b8573a" },
   kazim:   { name: "Kazım Usta", role: "Çay fabrikası", skin: "#d39a6c", cap: "#5a5a5a", body: "#5b6f8a" },
   husnu:   { name: "Hüsnü", role: "Fındıkçı", skin: "#c99367", cap: "#7a2f2a", body: "#6b5a3e" },
+  murat:   { name: "Çoban Murat", role: "Yayla · inekler", skin: "#d39a6c", cap: "#3a4a2a", body: "#7a5a3a" },
+  dursun:  { name: "Arıcı Dursun", role: "Yayla · kovanlar", skin: "#c99367", cap: "#e0b03a", body: "#5a6a4a" },
   cafer:   { name: "Şoför Cafer", role: "Kamyon ve rampa", skin: "#d8a47a", cap: "#c98a2c", body: "#4f5f6f" },
 };
 const DIALOGS = {
   intro: [
     ["dayi", "Yeğenim, bu mektubu okuyorsan Faroz'a dönmüşsün. İskele de tekne de yıkık yalı evi de artık senin."],
-    ["dayi", "Önce iskeleye in, hamsiyi tut. Deniz bereketlidir, yeter ki sen de kıyıda dur."],
+    ["dayi", "Önce kıyıya in. Sığlığa hamsi vurmuş; suyun içinden geçerek topla. Deniz bereketlidir, yeter ki sen de kıyıda dur."],
   ],
   nazmiye1: [
     ["nazmiye", "Ula uşağım, sen Rıfat'ın yeğeni değil misun? Maşallah, dayına çekmişsun."],
     ["nazmiye", "Hamsiyi tezgâha getir. Tezgâhın arkasındaki SAT karesinde durursan müşteriye ben gösteririm."],
   ],
   temel0: [
-    ["temel", "Oltayla mı tutuyorsun? Ha gayret! Benim tekne yatıyor, motoru küstü."],
+    ["temel", "Sığlıkta elle mi topluyorsun? Ha gayret! Benim tekne yatıyor, motoru küstü."],
     ["temel", "Bir gün parası çıkarsa tekneyi ben çalıştırırım, hamsiyi kasa kasa getiririm. Şimdilik toplamak sana düşer."],
   ],
   para: [["nazmiye", "Müşteri parayı tezgâhın yanına bırakır. Soldaki PARA karesine bas, kazancını al."]],
@@ -372,6 +386,24 @@ const DIALOGS = {
     ["nazmiye", "Hamsi Festivali! Faroz'un adı Trabzon'a, Rize'ye duyuldu."],
     ["dayi", "Yeğenim, ben Faroz'u bir iskele, bir tekne, bir yalı diye bıraktım. Sen kasaba yaptın. Toprak da deniz de sana küsmedi."],
   ],
+  ch4start: [
+    ["nazmiye", "Yaz geldi uşağım! Faroz'da yaz demek yayla demek. Kasabanın güneyinden yayla yoluna çıkılır."],
+    ["temel", "Rıfat yaylayı çok severdi. Bir de... yayla evinde sana bıraktığı bir şey var. Ev onarılmadan o kapı açılmaz."],
+  ],
+  yolu: [["nazmiye", "Yol açıldı! Yukarısı çayır, çiçek, sis. Ahırı onarırsak inekler de geri gelir."]],
+  ahir: [["nazmiye", "İnekler geldi! Yanlarından geçersen sütünü sağarsın."]],
+  mandira: [["nazmiye", "İki güğüm sütten bir teker peynir çıkar. Yayla peyniri kasabada altın gibi gider."]],
+  murat: [["murat", "Çoban Murat. İnekler benden sorulur; sütü mandıraya ben taşırım."]],
+  kovan: [["nazmiye", "Yayla balı başkadır, çiçeği çoktur. Kovanların yanından geçince peteği alırsın."]],
+  suzme: [["nazmiye", "Peteği süz, kavanoza koy. İki petekten bir kavanoz bal."]],
+  dursun: [["dursun", "Arıcı Dursun. Arıyla konuşurum, arı da benimle. Peteği süzmeye ben getiririm."]],
+  yev: [["dayi", "Yeğenim, yayla evine geldiysen dolabın altındaki sandığı aç. İçinde bir mektup daha var. Onu yaylada, horon sesini duyunca oku."]],
+  senlik: [
+    ["nazmiye", "Yayla şenliği! Kemençe çalıyor, horon tepiliyor. Bütün Faroz burada."],
+    ["dayi", "Yeğenim... Temel'e hiç söyleyemedim. O fırtına gecesi babasının teknesini denize ben çıkarmıştım. Ben döndüm, tekne dönmedi. Yalıyı bu yüzden bıraktım."],
+    ["dayi", "Sandıktaki eski anahtar o teknenindir. Onu Temel'e ver. Belki o zaman fırtına da diner."],
+    ["temel", "Bu anahtar... Babamın teknesinin anahtarı. Yeğenim, kış gelince seninle konuşacağımız çok şey var."],
+  ],
 };
 /* köy ve kasaba sesleri: ileride kahvehane ve meydan için (şimdilik oyunda kullanılmıyor) */
 const VILLAGE_VOICES = {
@@ -382,7 +414,7 @@ const VILLAGE_VOICES = {
 /* adımlar: bölüm yol haritası. Her bölümün sonunda gerçek büyümeyi ölçen kazanç kapısı ve elle yapılmış mal isteyen bina var. */
 const CHAPTERS = {
   1: { title: "Faroz Yalı", steps: [
-    { text: "Hamsi tut: iskelede BALIK TUT karesinde dur", goal: 5, val: s => s.st.caught, start: "intro" },
+    { text: "Hamsi topla: sığlıkta balıkların içinden geç", goal: 8, val: s => s.st.caught, start: "intro" },
     { text: "Hamsiyi tezgâha götür: SAT karesinde dur", goal: 5, val: s => s.st.dropped, start: "nazmiye1" },
     { text: "SAT karesinde bekle, gelen müşteriye sat", goal: 5, val: s => s.st.soldN, start: "temel0" },
     { text: "PARA karesine bas, kazancı topla", goal: 15, val: s => s.st.collected, start: "para" },
@@ -431,6 +463,20 @@ const CHAPTERS = {
     { text: "Kasaba büyüsün: dakikada 6.000 ₺ kazan", rate: 6000 },
     { text: "Hamsi Festivali'ni kur: kendi elinle 2 koli tütsülü de getir", zone: "festival" },
   ] },
+  4: { title: "Yayla", steps: [
+    { text: "Kasabanın güneyinden yayla yolunu aç", zone: "yolu", start: "ch4start" },
+    { text: "Ahırı onar, inekleri getir", zone: "ahir" },
+    { text: "Süt sağ: ineklerin yanından geç", goal: 10, val: s => s.st.harvest.sut || 0 },
+    { text: "Mandırayı kur", zone: "mandira" },
+    { text: "Sütü peynire çevir, peyniri sat", goal: 6, val: s => s.st.sold.peynir || 0 },
+    { text: "Çoban Murat'ı ahıra al", zone: "murat" },
+    { text: "Arı kovanlarını kur", zone: "kovan" },
+    { text: "Bal süzmehanesini kur", zone: "suzme" },
+    { text: "Arıcı Dursun'u kovanlara al", zone: "dursun" },
+    { text: "Dayının yayla evini onar", zone: "yev" },
+    { text: "Yayla da kendi dönsün: dakikada 14.000 ₺ kazan", rate: 14000 },
+    { text: "Yayla şenliğini kur: kendi elinle 4 peynir de getir", zone: "senlik" },
+  ] },
 };
 const STEPS = () => CHAPTERS[S.chapter].steps;
 const STEP = () => STEPS()[Math.min(S.step, STEPS().length - 1)];
@@ -447,7 +493,7 @@ function newState() {
     fac: Object.fromEntries(Object.keys(FAC).map(k => [k, { inp: 0, hand: 0, out: 0, outH: 0, t: 0 }])),
     paket: { q: {}, h: {}, out: {}, outH: {}, t: 0 },
     shelf: Object.fromEntries(PRODUCTS.map(k => [k, 0])), shelfH: Object.fromEntries(PRODUCTS.map(k => [k, 0])),
-    crops: [], ct: null, ctT: 6,
+    crops: shoalCrops(), ct: null, ctT: 6,
     st: { caught: 0, dropped: 0, soldN: 0, collected: 0, earned: 0, contracts: 0, sold: {}, made: {}, harvest: {} },
     seen: {},
   };
@@ -462,6 +508,7 @@ function readCode(t) { try { const s = JSON.parse(decodeURIComponent(escape(atob
 const T = {
   time: 0, walk: 0, face: 1, moving: false, payAcc: 0, fishT: 0, xferT: 0, cashT: 0, serveT: 0, goodsT: 0, pickT: 0,
   spawnT: 2, customers: [], floats: [], workers: {}, dialog: null, toastT: 0, saveT: 0,
+  flies: [], parts: [], pops: {}, bounce: 0, coinT: 0, shown: 0,
   boat: { phase: "dock", t: 0 }, rev: new Array(12).fill(0), revT: 0, beltT: 0, mktT: 0, zoom: 1, empty: {},
 };
 
@@ -499,6 +546,8 @@ function sellables() {
     out.push("tutsu");
     if (S.unl.cay1) out.push(S.unl.fabrika ? "kurucay" : "yascay");
     if (S.unl.findik) out.push(S.unl.kavurma ? "kavrulmus" : "findik");
+    if (S.unl.ahir) out.push(S.unl.mandira ? "peynir" : "sut");
+    if (S.unl.kovan) out.push(S.unl.suzme ? "bal" : "petek");
   }
   return out;
 }
@@ -519,12 +568,14 @@ function obstacles() {
   for (const id in FAC) if (FAC[id].ch <= S.chapter) o.push(FAC[id].r);
   if (S.chapter >= 2) o.push(L.houses.ev1, L.houses.ev2, L.ocak);
   if (S.chapter >= 3) o.push(L.paket, L.rampa);
+  if (S.chapter >= 4) o.push(L.ahir, L.yev);
   return o;
 }
 const onIskele = (x, y) => x > L.iskele.x + 0.08 && x < L.iskele.x + L.iskele.w - 0.08 && y > L.iskele.y0 + 0.2 && y < 0.7;
+const inShoal = (x, y) => x > L.shoal.x + .05 && x < L.shoal.x + L.shoal.w - .05 && y > L.shoal.y + .05;
 function blocked(x, y) {
   if (x < 0.25 || x > mapW() - 0.25 || y > mapH() - 0.25) return true;
-  if (y < 0.35 && !onIskele(x, y)) return true;
+  if (y < 0.35 && !onIskele(x, y) && !inShoal(x, y)) return true;
   for (const r of obstacles()) if (x > r.x - 0.25 && x < r.x + r.w + 0.25 && y > r.y - 0.25 && y < r.y + r.h + 0.25) return true;
   return false;
 }
@@ -587,11 +638,21 @@ function inputVector() {
 function plantPlot(r, k) {
   for (let y = 0; y < r.h; y++) for (let x = 0; x < r.w; x++) S.crops.push({ k, x: r.x + x + .5, y: r.y + y + .5, t: CFG.grow[k] * (0.4 + hash(x, y) * 0.6) });
 }
+function shoalCrops() {
+  const r = L.shoal, out = [];
+  for (let iy = 0; iy < 4; iy++) for (let ix = 0; ix < 9; ix++)
+    out.push({ k: "hamsi", fish: true, x: r.x + .25 + ix * .44 + (iy % 2) * .2 + (hash(ix, iy) - .5) * .1, y: r.y + .3 + iy * .45, t: CFG.grow.hamsi });
+  return out;
+}
+function plantYayla(kind) {
+  const pts = kind === "sut" ? L.cows : L.hives;
+  for (const [x, y] of pts) S.crops.push({ k: kind, x, y, t: CFG.grow[kind] * .5, n: 0, tree: true, [kind === "sut" ? "cow" : "hive"]: true });
+}
 function plantTrees() { for (const [x, y] of L.trees) S.crops.push({ k: "findik", x, y, t: CFG.grow.findik * .6, n: 0, tree: true }); }
 const ripe = c => c.tree ? c.n > 0 : c.t >= CFG.grow[c.k];
 function stepCrops(dt) {
   for (const c of S.crops) {
-    if (c.tree) { if (c.n < CFG.treeNuts) { c.t += dt; if (c.t >= CFG.grow.findik) { c.n = CFG.treeNuts; c.t = 0; } } }
+    if (c.tree) { const N = CFG.treeNuts[c.k]; if (c.n < N) { c.t += dt; if (c.t >= CFG.grow[c.k]) { c.n = N; c.t = 0; } } }
     else if (c.t < CFG.grow[c.k]) c.t = Math.min(CFG.grow[c.k], c.t + dt);
   }
 }
@@ -600,6 +661,7 @@ function pickCrop(c, into) {
   c.t = 0;
   into.push(c.k);
   S.st.harvest[c.k] = (S.st.harvest[c.k] || 0) + 1;
+  if (c.k === "hamsi") S.st.caught++;
 }
 function nearestRipe(k, x, y) {
   let best = null, bd = 1e9;
@@ -669,6 +731,7 @@ function stepCustomers(dt) {
       const h = S.shelfH[front.k] > 0;
       if (h) S.shelfH[front.k]--; else S.shelf[front.k]--;
       front.got++;
+      fly(front.k, [L.stall.x + 1.5, L.stall.y + .4, 30], [front.x, front.y, 40], .35); sfx("sell");
       const p = price(front.k, h);
       if (S.unl.nazmiye) earn(p); else { S.cash += p; T.rev[T.rev.length - 1] += p; }
       S.st.soldN++; S.st.sold[front.k] = (S.st.sold[front.k] || 0) + 1;
@@ -722,6 +785,8 @@ const ROUTES = {
 const HARVESTERS = {
   zehra: { kind: "yascay", fac: "fabrika", home: [16.0, 3.3] },
   husnu: { kind: "findik", fac: "kavurma", home: [1.0, 16.6] },
+  murat: { kind: "sut", fac: "mandira", home: [0.9, 23.8] },
+  dursun: { kind: "petek", fac: "suzme", home: [13.0, 22.6] },
 };
 function worker(id) {
   if (!T.workers[id]) {
@@ -789,7 +854,7 @@ function stepFacilities(dt) {
   if (S.unl.market) stepMarket(dt);
 }
 /* pakethane: kamyonun istediği malı bant tesislerden çeker, 5'ini bir koli yapar. El bölmesinden mühürlü koli çıkar. */
-const SRC = { tutsu: "tutsu", kurucay: "fabrika", kavrulmus: "kavurma" };
+const SRC = { tutsu: "tutsu", kurucay: "fabrika", kavrulmus: "kavurma", peynir: "mandira", bal: "suzme" };
 function stepPaket(dt) {
   const pk = S.paket;
   T.beltT -= dt;
@@ -817,7 +882,7 @@ function stepPaket(dt) {
 /* market: raflar tesislerin çıkışından kendiliğinden dolar (kamyonun ihtiyacı önce) */
 function stepMarket(dt) {
   T.mktT -= dt; if (T.mktT > 0) return; T.mktT = 0.3;
-  for (const u of ["tutsu", "kurucay", "kavrulmus"]) {
+  for (const u of Object.keys(SRC)) {
     const fs = S.fac[SRC[u]]; if (!S.unl[SRC[u]] || fs.out <= 0 || shelfN(u) >= CFG.shelfCap) continue;
     if (S.ct && ctNeed(koliOf(u)) > 0 && fs.out < 8) continue;
     fs.out--; S.shelf[u]++;
@@ -833,6 +898,8 @@ function newContract() {
   const kinds = ["koli_tutsu"];
   if (S.unl.fabrika) kinds.push("koli_kurucay");
   if (S.unl.kavurma) kinds.push("koli_kavrulmus");
+  if (S.unl.mandira) kinds.push("koli_peynir");
+  if (S.unl.suzme) kinds.push("koli_bal");
   const n = Math.min(8, 3 + S.st.contracts);
   const pick = kinds.length > 1 ? kinds.slice().sort(() => Math.random() - .5).slice(0, 2) : kinds;
   const req = {};
@@ -866,6 +933,75 @@ function stepTrade(dt) {
 }
 
 /* ================================================================
+   HİS: uçan ürün, parçacık, büyüyerek açılma, ses, titreşim (yalnız görüntü; oyun mantığını değiştirmez)
+   ================================================================ */
+function fly(item, a, b, dur = .28) { if (T.flies.length < 70) T.flies.push({ item, a, b, t: 0, dur }); }
+const flyOut = (item, to) => { fly(item, [S.px, S.py, 40], to); sfx("drop"); };
+const flyIn = (item, from) => { fly(item, [from[0], from[1], 6], [S.px, S.py, 44]); T.bounce = 1; sfx("pick"); };
+function burst(x, y, n = 14, cols = ["#f0b43a", "#c8352b", "#f4f1ea", "#4f7a34", "#5f9aa8"]) {
+  const [a, b] = P(x, y, 10);
+  for (let i = 0; i < n && T.parts.length < 160; i++) { const ang = Math.random() * Math.PI * 2, v = 60 + Math.random() * 110; T.parts.push({ x: a, y: b, vx: Math.cos(ang) * v, vy: Math.sin(ang) * v * .6 - 120, life: .9 + Math.random() * .5, t: 0, col: cols[i % cols.length], r: 2 + Math.random() * 2.5 }); }
+}
+function picked(c) {
+  T.bounce = 1; sfx("pick");
+  const [a, b] = P(c.x, c.y, 14);
+  for (let i = 0; i < 4 && T.parts.length < 160; i++) T.parts.push({ x: a, y: b, vx: (Math.random() - .5) * 70, vy: -40 - Math.random() * 60, life: .45, t: 0, col: c.k === "hamsi" ? "#d6ecff" : c.k === "yascay" ? "#9fd25a" : "#e0b070", r: 2 });
+}
+function stepFx(dt) {
+  for (const f of T.flies) f.t += dt;
+  T.flies = T.flies.filter(f => f.t < f.dur);
+  for (const p of T.parts) { p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 320 * dt; }
+  T.parts = T.parts.filter(p => p.t < p.life);
+  T.bounce = Math.max(0, T.bounce - dt * 6);
+}
+function drawFx() {
+  for (const f of T.flies) {
+    const q = f.t / f.dur, e = 1 - Math.pow(1 - q, 2);
+    const x = f.a[0] + (f.b[0] - f.a[0]) * e, y = f.a[1] + (f.b[1] - f.a[1]) * e, h = f.a[2] + (f.b[2] - f.a[2]) * e + Math.sin(Math.PI * q) * 34;
+    const [a, b] = P(x, y, h); drawItem(f.item, a, b, 1.05);
+  }
+  for (const p of T.parts) { ctx.globalAlpha = Math.max(0, 1 - p.t / p.life); ellipse(p.x, p.y, p.r, p.r, p.col); }
+  ctx.globalAlpha = 1;
+}
+/* yeni açılan yapı yerden büyüyerek çıkar (geri sekmeli büyüme) */
+function popWrap(id, r, f) {
+  return () => {
+    const t0 = T.pops[id]; if (t0 === undefined || T.time - t0 > .6) { f(); return; }
+    const q = Math.min(1, (T.time - t0) / .6), c1 = 1.70158, s = 1 + (c1 + 1) * Math.pow(q - 1, 3) + c1 * Math.pow(q - 1, 2);
+    const [a, b] = P(r.x + r.w / 2, r.y + r.h / 2);
+    ctx.save(); ctx.translate(a, b); ctx.scale(Math.max(.05, s), Math.max(.05, s)); ctx.translate(-a, -b); f(); ctx.restore();
+  };
+}
+/* sürüdeki hamsi: olgunsa sudan sıçrar, toplanınca halka kalır */
+function drawShoalFish(c) {
+  const [a, b] = P(c.x, c.y);
+  if (!ripe(c)) { const g = c.t / CFG.grow.hamsi; if (g < .35) { ctx.strokeStyle = "rgba(255,255,255," + (.5 - g) + ")"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.ellipse(a, b, 6 + g * 30, 3 + g * 14, 0, 0, Math.PI * 2); ctx.stroke(); } return; }
+  const ph = (T.time * 2.2 + hash(Math.round(c.x * 10), Math.round(c.y * 10)) * 6) % 3, jump = ph < 1 ? Math.sin(ph * Math.PI) * 14 : 0;
+  ellipse(a, b + 1, 8, 3, "rgba(20,50,70,.25)");
+  if (jump > 0) { ctx.save(); ctx.translate(a, b - jump); ctx.rotate((ph - .5) * 1.2); drawFish(0, 0, 1.1, "#c9d8e2", "#41617d"); ctx.restore(); }
+  else { drawFish(a, b - 1, .9, "rgba(200,218,230,.9)", "rgba(65,97,125,.85)"); ctx.fillStyle = "rgba(255,255,255,.55)"; ctx.fillRect(a - 3 + Math.sin(T.time * 5 + c.x) * 2, b - 3, 2, 1); }
+}
+let AC = null, muted = false;
+try { muted = localStorage.getItem("faroz.mute") === "1"; } catch (e) {}
+const lastSfx = {};
+function audioOn() { if (AC || muted) return; try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { AC = null; } }
+addEventListener("pointerdown", audioOn, { once: false }); addEventListener("keydown", audioOn);
+const SFX = { pick: [[880, 1320, .06, "sine", .05]], drop: [[540, 420, .05, "triangle", .05]], coin: [[1250, 1650, .06, "square", .018]], sell: [[700, 900, .05, "sine", .04]],
+  unlock: [[523, 523, .09, "triangle", .07], [659, 659, .09, "triangle", .07], [784, 784, .09, "triangle", .07], [1047, 1047, .18, "triangle", .07]] };
+function sfx(k) {
+  if (!AC || muted) return;
+  const now = AC.currentTime; if (lastSfx[k] && now - lastSfx[k] < .05) return; lastSfx[k] = now;
+  let t = now;
+  for (const [f0, f1, d, type, vol] of SFX[k]) {
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + d);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0001, t + d + .05);
+    o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + d + .06); t += d * .9;
+  }
+}
+function buzz(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
+
+/* ================================================================
    GÜNCELLEME
    ================================================================ */
 function update(dt) {
@@ -881,52 +1017,48 @@ function update(dt) {
   movePlayer(mx, my, dt);
   const cap = capNow();
 
-  // BALIK TUT
-  if (near(L.fishSpot, 0.6) && S.carry.length < cap) {
-    T.fishT += dt;
-    if (T.fishT >= CFG.fishTime) { T.fishT = 0; S.carry.push("hamsi"); S.st.caught++; floatText(S.px, S.py, "+1 hamsi", "#d6ecff"); }
-  } else T.fishT = 0;
+  stepFx(dt);
   // hasat: tarladan ve ağacın altından geçerken
   T.pickT -= dt;
   for (const c of S.crops) {
     if (S.carry.length >= cap) break;
     if (!ripe(c)) continue;
     const d = dist(S.px, S.py, c.x, c.y);
-    if (c.tree ? d < 1.1 && T.pickT <= 0 : d < 0.6) { pickCrop(c, S.carry); if (c.tree) T.pickT = 0.18; }
+    if (c.tree ? d < 1.1 && T.pickT <= 0 : d < 0.6) { pickCrop(c, S.carry); if (c.tree) T.pickT = 0.18; picked(c); }
   }
 
   T.xferT -= dt;
   if (T.xferT <= 0) {
-    if (S.unl.temel && near(L.pile) && S.pile > 0 && S.carry.length < cap) { S.pile--; S.carry.push("hamsi"); T.xferT = 0.09; }
+    if (S.unl.temel && near(L.pile) && S.pile > 0 && S.carry.length < cap) { S.pile--; S.carry.push("hamsi"); T.xferT = 0.09; flyIn("hamsi", L.pile); }
     for (const id in FAC) {
       if (!S.unl[id]) continue;
       const f = FAC[id], st = S.fac[id];
       // girdi: oyuncunun koyduğu önce el bölmesine (mühürlü çıkar)
       if (near(f.inAt)) {
         const i = lastIdx(S.carry, x => base(x) === f.inK);
-        if (i >= 0 && (st.hand < CFG.handCap || st.inp < CFG.facCap)) { S.carry.splice(i, 1); if (st.hand < CFG.handCap) st.hand++; else st.inp++; T.xferT = 0.08; }
+        if (i >= 0 && (st.hand < CFG.handCap || st.inp < CFG.facCap)) { flyOut(S.carry[i], [f.r.x + f.r.w / 2, f.r.y + f.r.h / 2, 20]); S.carry.splice(i, 1); if (st.hand < CFG.handCap) st.hand++; else st.inp++; T.xferT = 0.08; }
       }
       if (near(f.outAt) && st.out + st.outH > 0 && S.carry.length < cap) {
         if (st.outH > 0) { st.outH--; S.carry.push(f.outK + "*"); } else { st.out--; S.carry.push(f.outK); }
-        S.st.made[f.outK] = (S.st.made[f.outK] || 0) + 1; T.xferT = 0.08;
+        S.st.made[f.outK] = (S.st.made[f.outK] || 0) + 1; T.xferT = 0.08; flyIn(S.carry[S.carry.length - 1], f.outAt);
       }
     }
     if (S.unl.paket) {
       const pk = S.paket;
       if (near(L.paketIn)) {
         const i = lastIdx(S.carry, x => SRC[base(x)]);
-        if (i >= 0) { const u = base(S.carry[i]); if ((pk.h[u] || 0) < 10) { S.carry.splice(i, 1); pk.h[u] = (pk.h[u] || 0) + 1; T.xferT = 0.08; } }
+        if (i >= 0) { const u = base(S.carry[i]); if ((pk.h[u] || 0) < 10) { flyOut(S.carry[i], [L.paket.x + 1, L.paket.y + .7, 20]); S.carry.splice(i, 1); pk.h[u] = (pk.h[u] || 0) + 1; T.xferT = 0.08; } }
       }
       if (near(L.paketOut) && S.carry.length < cap) {
         const kh = KOLIS.find(k => (pk.outH[k] || 0) > 0), kn = KOLIS.find(k => (pk.out[k] || 0) > 0 && (!S.ct || ctNeed(k) > carryN(k)));
-        if (kh) { pk.outH[kh]--; S.carry.push(kh + "*"); T.xferT = 0.1; }
-        else if (kn) { pk.out[kn]--; S.carry.push(kn); T.xferT = 0.1; }
+        if (kh) { pk.outH[kh]--; S.carry.push(kh + "*"); T.xferT = 0.1; flyIn(kh + "*", L.paketOut); }
+        else if (kn) { pk.out[kn]--; S.carry.push(kn); T.xferT = 0.1; flyIn(kn, L.paketOut); }
       }
     }
     if (S.unl.rampa && near(L.rampaAt) && S.ct) {
       const need = goodsNeed();
       const i = lastIdx(S.carry, x => KOLIS.includes(base(x)) && ctNeed(base(x)) > 0 && !(isH(x) && need[x] > 0));
-      if (i >= 0 && loadKoli(S.carry[i])) { S.carry.splice(i, 1); T.xferT = 0.12; }
+      if (i >= 0) { const it = S.carry[i]; if (loadKoli(it)) { flyOut(it, [L.truck[0] - .3, L.truck[1], 30]); S.carry.splice(i, 1); T.xferT = 0.12; } }
     }
     // SAT: sepetteki satılık malı rafa diz (kapının istediği mühürlü mal hariç)
     if (near(L.sat, 0.75)) {
@@ -934,13 +1066,13 @@ function update(dt) {
       for (let i = S.carry.length - 1; i >= 0; i--) {
         const it = S.carry[i], k = base(it);
         if (!PRODUCTS.includes(k) || (isH(it) && need[it] > 0)) continue;
-        if (shelfN(k) < CFG.shelfCap) { S.carry.splice(i, 1); if (isH(it)) S.shelfH[k]++; else S.shelf[k]++; S.st.dropped++; T.xferT = 0.07; break; }
+        if (shelfN(k) < CFG.shelfCap) { flyOut(it, [L.stall.x + 1.5, L.stall.y + .4, 30]); S.carry.splice(i, 1); if (isH(it)) S.shelfH[k]++; else S.shelf[k]++; S.st.dropped++; T.xferT = 0.07; break; }
       }
     }
   }
   if (!S.unl.nazmiye && near(L.cash) && S.cash > 0) {
     T.cashT -= dt;
-    if (T.cashT <= 0) { const n = Math.min(S.cash, Math.max(1, Math.ceil(S.cash / 12))); S.cash -= n; S.money += n; S.st.earned += n; S.st.collected += n; T.cashT = 0.05; }
+    if (T.cashT <= 0) { const n = Math.min(S.cash, Math.max(1, Math.ceil(S.cash / 12))); S.cash -= n; S.money += n; S.st.earned += n; S.st.collected += n; T.cashT = 0.05; flyIn("para", L.cash); sfx("coin"); }
   }
   if (S.carry.length >= cap && T.moving && !T.fullWarn) { T.fullWarn = true; toast("Sepet doldu. Tezgâha ya da bir tesise götür."); }
   if (S.carry.length < cap) T.fullWarn = false;
@@ -953,11 +1085,11 @@ function update(dt) {
       if (S.money > 0) {
         T.payAcc += Math.max(cost / CFG.payTime, 60) * dt;
         const amt = Math.min(Math.floor(T.payAcc), S.money, cost - (S.paid[zid] || 0));
-        if (amt > 0) { T.payAcc -= amt; S.money -= amt; S.paid[zid] = (S.paid[zid] || 0) + amt; }
+        if (amt > 0) { T.payAcc -= amt; S.money -= amt; S.paid[zid] = (S.paid[zid] || 0) + amt; T.coinT -= dt; if (T.coinT <= 0) { T.coinT = .07; flyOut("para", [...L.zones[zid], 2]); sfx("coin"); } }
       }
       T.goodsT -= dt;
       if (T.goodsT <= 0) {
-        for (const k of Object.keys(goodsNeed())) if (takeFromCarry(k)) { const pg = S.pg[zid] || (S.pg[zid] = {}); pg[k] = (pg[k] || 0) + 1; T.goodsT = 0.15; break; }
+        for (const k of Object.keys(goodsNeed())) if (takeFromCarry(k)) { flyOut(k, [...L.zones[zid], 2]); const pg = S.pg[zid] || (S.pg[zid] = {}); pg[k] = (pg[k] || 0) + 1; T.goodsT = 0.15; break; }
       }
       if ((S.paid[zid] || 0) >= cost && !Object.keys(goodsNeed()).length) unlock(zid);
     } else T.payAcc = 0;
@@ -972,13 +1104,17 @@ function update(dt) {
   checkStep();
   T.saveT += dt; if (T.saveT > 3) { T.saveT = 0; save(); }
 }
-const ENDERS = { yali: 1, ocak: 2, festival: 3 };
+const ENDERS = { yali: 1, ocak: 2, festival: 3, senlik: 4 };
 function unlock(id) {
   S.unl[id] = true; T.payAcc = 0;
+  T.pops[id] = T.time; burst(...L.zones[id], 26); sfx("unlock"); buzz(40);
   floatText(...L.zones[id], ZONE_TITLES[id] + " açıldı", "#fff");
   if (CFG.pop[id]) S.pop += CFG.pop[id];
   if (id === "cay1" || id === "cay2") plantPlot(L.plots[id], "yascay");
   if (id === "findik") plantTrees();
+  if (id === "ahir") plantYayla("sut");
+  if (id === "kovan") plantYayla("petek");
+  if (id === "yolu") makeDecor();
   if (id === "market") { for (const k of ["hamsi", "temiz", "tuzlu"]) { S.shelf[k] = 0; S.shelfH[k] = 0; } }
   unstick();
   if (ENDERS[id]) { S.done = true; showDialog(id, () => showEnd(ENDERS[id])); }
@@ -1008,11 +1144,12 @@ function startChapter(n) {
 /* ================================================================
    HEDEF: oyuncunun şu an yürümesi gereken kare
    ================================================================ */
-const RAW_HOME = { yascay: [18.3, 2.4], findik: [4, 16.5] };
+const RAW_HOME = { yascay: [18.3, 2.4], findik: [4, 16.5], sut: [3.5, 25.2], petek: [15, 24.2] };
+function fishTarget() { const c = nearestRipe("hamsi", S.px, S.py); return c ? [c.x, c.y] : L.fishSpot; }
 function obtainTarget(k, depth = 0) {
   if (depth > 5) return null;
-  if (k === "hamsi") return S.unl.temel && S.pile > 0 ? L.pile : L.fishSpot;
-  if (k === "yascay" || k === "findik") { const c = nearestRipe(k, S.px, S.py); return c ? [c.x, c.y] : RAW_HOME[k]; }
+  if (k === "hamsi") return S.unl.temel && S.pile > 0 ? L.pile : fishTarget();
+  if (RAW_HOME[k]) { const c = nearestRipe(k, S.px, S.py); return c ? [c.x, c.y] : RAW_HOME[k]; }
   const id = FAC_OF[k], f = FAC[id], st = S.fac[id];
   if (!S.unl[id]) return null;
   if (st.out + st.outH > 0) return f.outAt;
@@ -1023,6 +1160,7 @@ function obtainTarget(k, depth = 0) {
 /* mühürlü mal: girdiyi el bölmesine koy, çıkıştan al */
 function muhurTarget(item) {
   const k = base(item);
+  if (S.carry.length >= capNow()) return fullTarget();   // önce sepeti boşalt (mühürlü mal tezgâha bırakılmaz)
   if (KOLIS.includes(k)) {
     const u = unitOf(k), pk = S.paket;
     if ((pk.outH[k] || 0) > 0) return L.paketOut;
@@ -1046,7 +1184,7 @@ function fullTarget() {
 function sellTarget(k) {
   if (S.carry.length >= capNow()) return fullTarget();
   const src = obtainTarget(k);
-  const raw = k === "hamsi" || k === "yascay" || k === "findik";
+  const raw = k === "hamsi" || !!RAW_HOME[k];
   if (carryN(k) > 0 && (raw || !src || src !== FAC[FAC_OF[k]].outAt || S.fac[FAC_OF[k]].out + S.fac[FAC_OF[k]].outH === 0)) return L.sat;
   if (!S.unl.nazmiye && S.cash > 0 && !S.carry.length) return L.cash;
   return src;
@@ -1056,6 +1194,13 @@ function earnTarget() {
   if (S.ct && S.unl.paket) {
     if (S.carry.some(x => KOLIS.includes(base(x)) && !isH(x) && ctNeed(base(x)) > 0)) return L.rampaAt;
     if (!S.unl.cafer) return L.paketOut;
+  }
+  if (S.chapter >= 4) {
+    if (S.unl.suzme && !S.unl.dursun) return sellTarget("bal");
+    if (S.unl.kovan && !S.unl.suzme) return sellTarget("petek");
+    if (S.unl.mandira && !S.unl.murat) return sellTarget("peynir");
+    if (S.unl.ahir && !S.unl.mandira) return sellTarget("sut");
+    if (S.unl.murat) return sellTarget("peynir");
   }
   if (S.chapter >= 3 && S.unl.kavurma && !S.unl.husnu) return sellTarget("kavrulmus");
   if (S.chapter >= 3 && S.unl.findik && !S.unl.kavurma) return sellTarget("findik");
@@ -1079,10 +1224,10 @@ function targetPoint() {
   }
   if (st.rate) return earnTarget();
   if (S.chapter === 1) switch (S.step) {
-    case 0: return S.carry.length >= capNow() ? L.sat : L.fishSpot;
-    case 1: return S.carry.length ? L.sat : L.fishSpot;
-    case 2: return S.carry.length || T.customers.length ? L.sat : L.fishSpot;
-    case 3: return S.cash > 0 ? L.cash : (S.carry.length ? L.sat : L.fishSpot);
+    case 0: return S.carry.length >= capNow() ? L.sat : fishTarget();
+    case 1: return S.carry.length ? L.sat : fishTarget();
+    case 2: return S.carry.length || T.customers.length ? L.sat : fishTarget();
+    case 3: return S.cash > 0 ? L.cash : (S.carry.length ? L.sat : fishTarget());
     case 5: return obtainTarget("temiz");
     case 6: return sellTarget("temiz");
     case 10: return sellTarget("tuzlu");
@@ -1093,6 +1238,10 @@ function targetPoint() {
     if (S.step === 3) return sellTarget("kurucay");
   }
   if (S.chapter === 3 && (S.step === 2 || S.step === 9)) return S.ct ? earnTarget() : L.rampaAt;
+  if (S.chapter === 4) {
+    if (S.step === 2) return S.carry.length >= capNow() ? fullTarget() : obtainTarget("sut");
+    if (S.step === 4) return sellTarget("peynir");
+  }
   return null;
 }
 /* sorun çağrıları: otomatik iş tıkandığında oyuncuyu çağırır (en fazla 2) */
@@ -1162,6 +1311,7 @@ function roofGable(x, y, w, d, h, rh, col) {
 const HILL_H = x => 10 + (-1 - x) * 13;
 function tileKind(x, y) {
   if (x < 0 && y >= -1) return "hill";
+  if (y < 0 && y >= -2 && x >= 11 && x <= 15) return "shallow";
   if (y < 0) return "sea";
   if (y === 0) return "pebble";
   if (ROAD.includes(y)) return S.chapter >= 3 ? "asphalt" : "road";
@@ -1170,15 +1320,16 @@ function tileKind(x, y) {
   if (x === 8 && y >= 1 && y <= 11) return "path";
   if (y === 8 && x >= 8 && x <= 13) return "path";
   if (y === 1 && x >= 3 && x < 16) return "pebble2";
-  if (S.chapter >= 3 && y >= 14 && x >= 11) return "yard";
+  if (S.chapter >= 3 && y >= 14 && y < 21 && x >= 11) return "yard";
+  if (y >= 21) return x === 11 ? "path" : "meadow";
   return "grass";
 }
 function drawGround() {
   const t = T.time;
-  for (let s = -20; s < 57; s++) {
+  for (let s = -20; s < 64; s++) {
     for (let x = -9; x < 30; x++) {
       const y = s - x;
-      if (y < -11 || y > 27) continue;
+      if (y < -11 || y > 34) continue;
       const k = tileKind(x, y), r = hash(x, y);
       const hh = k === "hill" ? HILL_H(Math.max(x, -7)) : 0;
       const [sx, sy] = P(x + .5, y + .5, hh);
@@ -1188,6 +1339,10 @@ function drawGround() {
         const wave = Math.sin(t * 1.3 + x * .7 + y * 1.1) * .035;
         tile(x, y, shade("#3d5d77", 0.96 + r * .06 + wave + Math.max(-.18, y * .018)), null);
         if (r > .72) { const [a, b] = P(x + .5, y + .5); const o = Math.sin(t + r * 9) * 3; line([a - 8 + o, b], [a + 6 + o, b], "rgba(225,235,240,.32)", 1.5); }
+      } else if (k === "shallow") {
+        const wave = Math.sin(t * 1.6 + x * .9 + y) * .04;
+        tile(x, y, shade("#5f9aa8", .97 + r * .05 + wave), "rgba(255,255,255,.12)");
+        if (r > .5) { const [a, b] = P(x + r, y + .5); ellipse(a, b, 4, 1.6, "rgba(200,190,160,.45)"); }
       } else if (k === "pebble" || k === "pebble2") {
         tile(x, y, shade(k === "pebble" ? "#a7a49a" : "#8f9a6e", .94 + r * .08), null);
         for (let i = 0; i < 4; i++) { const [a, b] = P(x + hash(x, y + i), y + hash(y + i, x)); ellipse(a, b, 2.4 + r * 1.5, 1.6, i % 2 ? "#c9c6bb" : "#7f7d75"); }
@@ -1197,6 +1352,10 @@ function drawGround() {
         if (k === "asphalt" && y === ROAD[0]) line(P(x + .15, y + 1), P(x + .55, y + 1), "rgba(245,240,220,.85)", 2);
       } else if (k === "path") tile(x, y, shade("#b9a47c", .95 + r * .06), "rgba(90,70,40,.15)");
       else if (k === "yard") tile(x, y, shade("#b8b2a2", .95 + r * .05), "rgba(80,70,50,.18)");
+      else if (k === "meadow") {
+        tile(x, y, shade("#82b85c", .93 + r * .09), "rgba(30,60,20,.08)");
+        if (r > .7) { const [a, b] = P(x + r, y + .3 + r * .4); ellipse(a, b, 2.2, 2.2, ["#f2efe0", "#e7c84e", "#c86aa8", "#6aa0d8"][Math.floor(r * 40) % 4]); }
+      }
       else if (k === "terrace") tile(x, y, shade("#6b5a3e", .95 + r * .05), "rgba(40,30,20,.25)");
       else if (k === "hill") {
         box(x, y, 1, 1, hh, shade("#557f39", .95 + r * .07), shade("#6b5b3e", .95), shade("#7d6a48", .95), 0, "rgba(30,40,20,.22)");
@@ -1270,6 +1429,10 @@ function drawItem(item, x, y, s = 1) {
   else if (k === "kurucay") { ctx.fillStyle = "#b8352b"; ctx.fillRect(x - 5 * s, y - 6 * s, 10 * s, 9 * s); ctx.fillStyle = "#f4f1ea"; ctx.fillRect(x - 5 * s, y - 3 * s, 10 * s, 3 * s); ctx.fillStyle = "#3d6a2a"; ctx.fillRect(x - 2 * s, y - 2.5 * s, 4 * s, 2 * s); }
   else if (k === "findik") { ellipse(x - 2.5 * s, y, 3.2 * s, 3 * s, "#a8733d"); ellipse(x + 2.5 * s, y - .5 * s, 3.2 * s, 3 * s, "#94632f"); ellipse(x - 2.5 * s, y - 2.5 * s, 2.4 * s, 1.2 * s, "#d8c08a"); }
   else if (k === "kavrulmus") { ctx.fillStyle = "#d9c49a"; ctx.beginPath(); ctx.roundRect(x - 5 * s, y - 7 * s, 10 * s, 10 * s, 2 * s); ctx.fill(); ellipse(x, y - 2 * s, 2.6 * s, 2.4 * s, "#7a4a22"); }
+  else if (k === "sut") { ctx.fillStyle = "#c9ccd0"; ctx.beginPath(); ctx.roundRect(x - 4 * s, y - 8 * s, 8 * s, 10 * s, 2 * s); ctx.fill(); ctx.fillStyle = "#9aa0a6"; ctx.fillRect(x - 2.5 * s, y - 10 * s, 5 * s, 2.5 * s); ctx.fillStyle = "#fff"; ctx.fillRect(x - 2.5 * s, y - 6 * s, 5 * s, 2 * s); }
+  else if (k === "peynir") { ctx.fillStyle = "#f4ecc8"; ctx.beginPath(); ctx.moveTo(x - 6 * s, y + 1 * s); ctx.lineTo(x + 6 * s, y + 1 * s); ctx.lineTo(x + 6 * s, y - 4 * s); ctx.lineTo(x - 2 * s, y - 7 * s); ctx.closePath(); ctx.fill(); ctx.fillStyle = "#e0d3a0"; ctx.fillRect(x - 6 * s, y - 1 * s, 12 * s, 2 * s); ellipse(x + 2 * s, y - 3 * s, 1 * s, 1 * s, "#d9c888"); }
+  else if (k === "petek") { ctx.fillStyle = "#e8a92a"; ctx.beginPath(); for (let i = 0; i < 6; i++) { const ang = i * Math.PI / 3; ctx.lineTo(x + Math.cos(ang) * 5.5 * s, y - 3 * s + Math.sin(ang) * 5.5 * s); } ctx.closePath(); ctx.fill(); ctx.strokeStyle = "#a06a10"; ctx.lineWidth = 1; ctx.stroke(); }
+  else if (k === "bal") { ctx.fillStyle = "#d98a1a"; ctx.beginPath(); ctx.roundRect(x - 4.5 * s, y - 8 * s, 9 * s, 10 * s, 2.5 * s); ctx.fill(); ctx.fillStyle = "#c8352b"; ctx.fillRect(x - 4.5 * s, y - 10 * s, 9 * s, 3 * s); ctx.fillStyle = "rgba(255,255,255,.4)"; ctx.fillRect(x - 3 * s, y - 6 * s, 1.5 * s, 5 * s); }
   else if (k.startsWith("koli_")) { ctx.fillStyle = "#c79a5c"; ctx.fillRect(x - 6 * s, y - 7 * s, 12 * s, 9 * s); ctx.fillStyle = "#a57a40"; ctx.fillRect(x - 6 * s, y - 7 * s, 12 * s, 2 * s); drawItem(unitOf(k), x, y - 2 * s, .45 * s); }
   else if (k === "para") { ellipse(x, y, 6 * s, 4 * s, "#c08a1e"); ellipse(x, y - 1.5 * s, 6 * s, 4 * s, "#f0b43a"); }
   if (isH(item)) { ctx.fillStyle = "#f0b43a"; ctx.strokeStyle = "#7a5200"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x + 6 * s, y - 5 * s, 2.8 * s, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
@@ -1284,8 +1447,8 @@ function drawPerson(x, y, o) {
   ctx.fillStyle = o.body; ctx.beginPath(); ctx.roundRect(sx - 9, bodyY, 18, 20, 6); ctx.fill();
   if (o.apron) { ctx.fillStyle = o.apron; ctx.beginPath(); ctx.roundRect(sx - 6, bodyY + 6, 12, 14, 3); ctx.fill(); }
   if (o.carry && o.carry.length) {
-    const back = -(o.face || 1) * 8;
-    for (let i = 0; i < Math.min(o.carry.length, 16); i++) drawItem(o.carry[i], sx + back, bodyY + 12 - i * 4.2, .9);
+    const back = -(o.face || 1) * 8, sway = o.moving ? Math.sin(o.walk * .5) : 0;
+    for (let i = 0; i < Math.min(o.carry.length, 24); i++) drawItem(o.carry[i], sx + back + sway * i * .22, bodyY + 12 - i * 3.6, .9);
   }
   ellipse(sx, bodyY - 8, 8.5, 9, o.skin || "#e6b58b");
   if (o.scarf) {
@@ -1540,6 +1703,83 @@ function drawTruck() {
     ctx.fillStyle = f < .3 ? "#e0533f" : "#86ad4a"; ctx.fillRect(la - w / 2, lb + 14, w * f, 5);
   });
 }
+function drawMandira() {
+  const r = FAC.mandira.r, st = S.fac.mandira;
+  if (!S.unl.mandira) { rubble(r); return; }
+  shadow(r.x + r.w / 2, r.y + r.h / 2, 64, 26);
+  box(r.x, r.y, r.w, r.h, 12, null, "#9a958a", "#85817a");
+  box(r.x, r.y, r.w, r.h, 40, null, "#f1ede2", "#dcd6c8", 12);
+  faceY(r.x, r.y + r.h, .7, 1.2, 0, 26, "#5a4632"); faceX(r.x + r.w, r.y, .4, .9, 22, 32, "#3e5a76");
+  roofGable(r.x, r.y, r.w, r.h, 40, 14, "#6f7b86");
+  smoke(P(r.x + .4, r.y + .3, 60), st.t > 0);
+  for (let i = 0; i < Math.min(st.out + st.outH, 5); i++) { const [a, b] = P(r.x + r.w + .15, r.y + .3 + i * .2, 2); drawItem("peynir", a, b - 2, .85); }
+  nameLab(r, 64, "MANDIRA");
+}
+function drawSuzme() {
+  const r = FAC.suzme.r, st = S.fac.suzme;
+  if (!S.unl.suzme) { rubble(r); return; }
+  shadow(r.x + r.w / 2, r.y + r.h / 2, 56, 22);
+  box(r.x, r.y, r.w, r.h, 30, null, "#b0804c", "#966a3e");
+  faceY(r.x, r.y + r.h, .5, 1.0, 0, 22, "#4a3424");
+  roofGable(r.x, r.y, r.w, r.h, 30, 12, "#6f7b86");
+  for (let i = 0; i < Math.min(st.out + st.outH, 5); i++) { const [a, b] = P(r.x + r.w + .15, r.y + .25 + i * .2, 2); drawItem("bal", a, b - 2, .85); }
+  nameLab(r, 54, "BAL SÜZME");
+}
+function drawAhir() {
+  const r = L.ahir, ok = S.unl.ahir;
+  shadow(r.x + r.w / 2, r.y + r.h / 2, 80, 30);
+  box(r.x, r.y, r.w, r.h, 14, null, "#9a958a", "#85817a");
+  if (!ok) { rubble({ x: r.x, y: r.y + r.h - .5, w: r.w, h: .6 }, 5); return; }
+  box(r.x, r.y, r.w, r.h, 42, null, "#8b4a32", "#743c28", 14);
+  for (let v = 18; v < 42; v += 6) line(P(r.x, r.y + r.h, v), P(r.x + r.w, r.y + r.h, v), "rgba(30,15,10,.3)", 1);
+  faceY(r.x, r.y + r.h, .9, 1.7, 0, 34, "#3a2418");
+  line(P(r.x + .9, r.y + r.h, 34), P(r.x + 1.7, r.y + r.h, 0), "#f1ede2", 2); line(P(r.x + 1.7, r.y + r.h, 34), P(r.x + .9, r.y + r.h, 0), "#f1ede2", 2);
+  roofGable(r.x, r.y, r.w, r.h, 42, 18, "#6f7b86");
+  nameLab(r, 76, "AHIR");
+}
+function drawYev() {
+  const r = L.yev, ok = S.unl.yev;
+  shadow(r.x + r.w / 2, r.y + r.h / 2, 80, 30);
+  box(r.x, r.y, r.w, r.h, 18, null, "#9a958a", "#85817a");
+  if (!ok) { line(P(r.x, r.y + r.h, 18), P(r.x + .4, r.y + r.h, 40), "#5a3e26", 3); rubble({ x: r.x + r.w, y: r.y, w: .6, h: r.h }, 4); nameLab(r, 50, "ESKİ YAYLA EVİ", "rgba(27,38,51,.7)"); return; }
+  box(r.x, r.y, r.w, r.h, 50, null, "#a26b3e", "#8b5a32", 18);
+  for (const u of [.25, 1.0, 1.7]) faceY(r.x, r.y + r.h, u, u + .4, 26, 42, "#f4f1ea");
+  faceY(r.x, r.y + r.h, 1.0, 1.4, 0, 16, "#4a3424");
+  roofGable(r.x, r.y, r.w, r.h, 50, 18, "#6f7b86");
+  smoke(P(r.x + r.w * .8, r.y + .3, 74), true);
+  nameLab(r, 84, "DAYININ YAYLA EVİ", "rgba(200,53,43,.92)");
+}
+function drawSenlik() {
+  const r = L.senlik;
+  if (!S.unl.senlik) return;
+  box(r.x, r.y, r.w, r.h, 10, "#a77a4c", "#86613d", "#6e4f32");
+  for (const u of [0, r.w]) line(P(r.x + u, r.y, 10), P(r.x + u, r.y, 60), "#5a3e26", 3);
+  for (let i = 0; i < 10; i++) { const u = r.x + r.w * i / 10; const sag = Math.sin(i / 9 * Math.PI) * 8; const [a, b] = P(u, r.y, 56 - sag); poly([[a - 4, b], [a + 4, b], [a, b + 9]], ["#c8352b", "#f0b43a", "#4f7a34", "#24425e"][i % 4], null); }
+  // horon halkası: el ele dönen köylüler
+  for (let i = 0; i < 6; i++) { const ang = T.time * 1.2 + i * Math.PI / 3, x = r.x + r.w / 2 + Math.cos(ang) * .9, y = r.y + r.h + .9 + Math.sin(ang) * .5;
+    drawPerson(x, y, Object.assign({}, CUST_LOOKS[i % CUST_LOOKS.length], { skin: "#e2b089", face: Math.cos(ang) > 0 ? -1 : 1, walk: T.time * 8 + i, moving: true })); }
+  nameLab(r, 76, "YAYLA ŞENLİĞİ", "rgba(200,53,43,.94)");
+}
+/* inek: olgunsa yanında süt güğümü */
+function drawCow(c) {
+  const [a, b] = P(c.x, c.y), sway = Math.sin(T.time * 1.5 + c.x) * 1.5;
+  ellipse(a, b + 2, 18, 6, "rgba(15,30,15,.25)");
+  ctx.fillStyle = "#3a2a1e"; for (const dx of [-9, -4, 5, 10]) ctx.fillRect(a + dx, b - 8, 3, 9);
+  ctx.fillStyle = "#f4f1ea"; ctx.beginPath(); ctx.ellipse(a, b - 14, 15, 8, 0, 0, Math.PI * 2); ctx.fill();
+  ellipse(a - 5, b - 16, 4, 3, "#2b2b2b"); ellipse(a + 6, b - 12, 3.5, 2.5, "#2b2b2b");
+  ctx.fillStyle = "#f4f1ea"; ctx.beginPath(); ctx.ellipse(a + 15, b - 18 + sway, 6, 5, 0, 0, Math.PI * 2); ctx.fill();
+  ellipse(a + 19, b - 16 + sway, 3, 2.4, "#e0a090"); ctx.fillStyle = "#222"; ctx.fillRect(a + 15, b - 21 + sway, 2, 2);
+  if (c.n > 0) { drawItem("sut", a - 2, b - 30, 1.1); if (c.n > 1) drawItem("sut", a + 8, b - 30, 1.1); }
+}
+/* kovan: ahşap, katlı; olgunsa etrafında arılar */
+function drawHive(c) {
+  const [a, b] = P(c.x, c.y);
+  ellipse(a, b + 2, 12, 5, "rgba(15,30,15,.25)");
+  box(c.x - .22, c.y - .22, .44, .44, 10, null, "#c79a5c", "#a57a40");
+  box(c.x - .22, c.y - .22, .44, .44, 20, null, "#e0b070", "#c79a5c", 10);
+  box(c.x - .25, c.y - .25, .5, .5, 23, "#8a6440", "#76553a", "#6a4a32", 20);
+  if (c.n > 0) for (let i = 0; i < 4; i++) { const ang = T.time * 4 + i * 1.6 + c.x; ellipse(a + Math.cos(ang) * 12, b - 30 + Math.sin(ang * 1.3) * 6, 1.8, 1.4, "#f0b43a"); }
+}
 function drawFestival() {
   const r = L.festival;
   if (!S.unl.festival) return;
@@ -1610,10 +1850,7 @@ function pad(p, text, col, txtBg, isTarget) {
 const OUT_TXT = (k, n, h) => SHORT[k] + " AL · " + n + (h ? " ★" + h : "");
 function drawPads(tp) {
   const isT = p => tp === p;
-  if (S.chapter === 1 || !S.unl.temel) pad(L.fishSpot, "BALIK TUT", "rgba(61,93,119,.7)", "rgba(36,66,94,.92)", isT(L.fishSpot));
-  if (near(L.fishSpot, 0.6) && S.carry.length < capNow()) {
-    const [a, b] = P(S.px, S.py, 70); ctx.strokeStyle = "#f0b43a"; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(a, b, 9, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (T.fishT / CFG.fishTime)); ctx.stroke();
-  }
+  if (S.chapter === 1 && !S.unl.temel) { const [a, b] = P(L.shoal.x + L.shoal.w / 2, L.shoal.y + .2, 14); lab(L.shoal.x + 2, L.shoal.y + .8, 1, () => label(a, b, "SIĞLIK · HAMSİ", 10, "rgba(36,66,94,.92)")); }
   pad(L.sat, S.unl.market ? "MARKET" : "SAT", "rgba(200,53,43,.5)", "rgba(200,53,43,.92)", isT(L.sat));
   if (!S.unl.nazmiye && (S.cash > 0 || S.step >= 2)) pad(L.cash, "PARA · " + S.cash + " ₺", "rgba(240,180,58,.55)", "rgba(150,100,10,.92)", isT(L.cash));
   if (S.unl.temel) pad(L.pile, "HAMSİ AL · " + S.pile, "rgba(243,241,234,.6)", "rgba(27,38,51,.88)", isT(L.pile));
@@ -1633,10 +1870,12 @@ function drawPads(tp) {
   const st = STEP();
   if (!S.done && st.zone && !S.unl[st.zone]) {
     const zid = st.zone, [zx, zy] = L.zones[zid], cost = CFG.zoneCost[zid], paid = S.paid[zid] || 0;
-    const s = .62 + Math.sin(T.time * 4) * .04;
-    poly([P(zx - s, zy - s), P(zx + s, zy - s), P(zx + s, zy + s), P(zx - s, zy + s)], "rgba(243,241,234,.4)", "rgba(255,255,255,.95)", 3);
+    const s = .74 + Math.sin(T.time * 4) * .03, on = near([zx, zy], .75);
+    poly([P(zx - s, zy - s), P(zx + s, zy - s), P(zx + s, zy + s), P(zx - s, zy + s)], "rgba(20,40,60,.25)", null);
+    poly([P(zx - s, zy - s, 3), P(zx + s, zy - s, 3), P(zx + s, zy + s, 3), P(zx - s, zy + s, 3)], on ? "rgba(36,66,94,.62)" : "rgba(36,66,94,.42)", "rgba(255,255,255,.98)", 4.5);
     const f = paid / cost;
-    if (f > 0) poly([P(zx - s, zy + s - 2 * s * f), P(zx + s, zy + s - 2 * s * f), P(zx + s, zy + s), P(zx - s, zy + s)], "rgba(240,180,58,.8)", null);
+    if (f > 0) poly([P(zx - s, zy + s - 2 * s * f, 3), P(zx + s, zy + s - 2 * s * f, 3), P(zx + s, zy + s, 3), P(zx - s, zy + s, 3)], "rgba(240,180,58,.85)", null);
+    { const [ca, cb] = P(zx, zy, 6); drawItem("para", ca - 7, cb + 2, 1.4); drawItem("para", ca + 6, cb - 1, 1.4); drawItem("para", ca, cb - 5, 1.4); }
     const [a, b] = P(zx, zy, 18);
     const items = Object.entries(goodsNeed()).map(([k, n]) => [k, n, false]);
     lab(zx, zy, 4, () => {
@@ -1673,11 +1912,11 @@ function edgeArrow(p, text, col, idx) {
   if (text) label(Math.max(80, Math.min(W - 80, ex - Math.cos(ang) * 34)), Math.max(top + 4, Math.min(bot - 4, ey - Math.sin(ang) * 26)), text, 11, col === "#f0b43a" ? "rgba(27,38,51,.82)" : col);
 }
 function targetName(tp) {
-  const m = [[L.fishSpot, "BALIK TUT"], [L.sat, S.unl.market ? "MARKET" : "SAT"], [L.cash, "PARA"], [L.pile, "HAMSİ AL"], [L.paketOut, "KOLİ AL"], [L.paketIn, "EL PAKETİ"], [L.rampaAt, "RAMPA"]];
+  const m = [[L.fishSpot, "SIĞLIK"], [L.sat, S.unl.market ? "MARKET" : "SAT"], [L.cash, "PARA"], [L.pile, "HAMSİ AL"], [L.paketOut, "KOLİ AL"], [L.paketIn, "EL PAKETİ"], [L.rampaAt, "RAMPA"]];
   for (const id in FAC) m.push([FAC[id].inAt, SHORT[FAC[id].inK]], [FAC[id].outAt, SHORT[FAC[id].outK] + " AL"]);
   for (const [p, n] of m) if (p === tp) return n;
   const st = STEP(); if (st.zone && tp === L.zones[st.zone]) return ZONE_TITLES[st.zone];
-  const c = S.crops.find(c => c.x === tp[0] && c.y === tp[1]); if (c) return c.k === "yascay" ? "ÇAY TOPLA" : "FINDIK TOPLA";
+  const c = S.crops.find(c => c.x === tp[0] && c.y === tp[1]); if (c) return { yascay: "ÇAY TOPLA", findik: "FINDIK TOPLA", hamsi: "HAMSİ TOPLA" }[c.k];
   return null;
 }
 function drawJoy() {
@@ -1689,11 +1928,11 @@ function drawJoy() {
 }
 
 const WORKER_EXTRA = { nazmiye: { apron: "#f4f1ea" }, fadime: { apron: "#f4f1ea" }, kazim: { apron: "#e9e4d8" } };
-const DRAW_FAC = { ayik: drawAyik, tuz: drawTuz, tutsu: drawTutsu, fabrika: drawFabrika, kavurma: drawKavurma };
+const DRAW_FAC = { ayik: drawAyik, tuz: drawTuz, tutsu: drawTutsu, fabrika: drawFabrika, kavurma: drawKavurma, mandira: drawMandira, suzme: drawSuzme };
 function render() {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.fillStyle = "#4d7438"; ctx.fillRect(0, 0, cv.width, cv.height);
-  T.zoom += ((S.chapter >= 3 ? .82 : 1) - T.zoom) * .03;   // kasabada kamera geri çekilir
+  T.zoom += ((S.chapter >= 4 ? .78 : S.chapter >= 3 ? .82 : 1) - T.zoom) * .03;   // kasabada kamera geri çekilir
   Z = Z0 * T.zoom;
   const [px, py] = P(S.px, S.py);
   cam.x += (px - cam.x) * .12; cam.y += (py - 20 - cam.y) * .12;
@@ -1709,18 +1948,19 @@ function render() {
   const add = (d, f) => list.push({ d, f });
   const mid = r => r.x + r.w / 2 + r.y + r.h / 2;
   add(L.dock[0] + L.dock[1], drawBoat);
-  for (const id in FAC) if (FAC[id].ch <= S.chapter) add(mid(FAC[id].r), DRAW_FAC[id]);
-  add(mid(L.stall), drawStall);
-  add(mid(L.yali), drawYali);
+  for (const id in FAC) if (FAC[id].ch <= S.chapter) add(mid(FAC[id].r), popWrap(id, FAC[id].r, DRAW_FAC[id]));
+  add(mid(L.stall), popWrap("market", L.stall, drawStall));
+  add(mid(L.yali), popWrap("yali", L.yali, drawYali));
   if (!S.unl.market) add(mid(L.kufe), drawKufe);
   add(L.pile[0] + L.pile[1] - .6, drawPile);
   add(L.sign[0] + L.sign[1], drawSign);
   if (S.chapter >= 2) {
-    for (const [k, r] of Object.entries(L.houses)) add(mid(r), () => drawHouse(r, S.unl[k]));
-    add(mid(L.ocak), drawOcak);
+    for (const [k, r] of Object.entries(L.houses)) add(mid(r), popWrap(k, r, () => drawHouse(r, S.unl[k])));
+    add(mid(L.ocak), popWrap("ocak", L.ocak, drawOcak));
   }
-  if (S.chapter >= 3) { add(mid(L.paket), drawPaket); add(mid(L.festival), drawFestival); add(L.truck[0] + L.truck[1] + .5, drawTruck); }
-  for (const c of S.crops) add(c.x + c.y, c.tree ? () => drawFindik(c.x, c.y, 0, 1.15, c.n) : () => drawTea(c));
+  if (S.chapter >= 3) { add(mid(L.paket), popWrap("paket", L.paket, drawPaket)); add(mid(L.festival), popWrap("festival", L.festival, drawFestival)); add(L.truck[0] + L.truck[1] + .5, drawTruck); }
+  if (S.chapter >= 4) { add(mid(L.ahir), popWrap("ahir", L.ahir, drawAhir)); add(mid(L.yev), popWrap("yev", L.yev, drawYev)); add(mid(L.senlik), popWrap("senlik", L.senlik, drawSenlik)); }
+  for (const c of S.crops) add(c.x + c.y, c.cow ? () => drawCow(c) : c.hive ? () => drawHive(c) : c.tree ? () => drawFindik(c.x, c.y, 0, 1.15, c.n) : c.fish ? () => drawShoalFish(c) : () => drawTea(c));
   for (const [x, y] of [[-3.6, 2.2], [-5.4, 7.6], [-2.8, 11.6]]) add(-100 + x + y, () => drawHillHouse(x, y, "#a26b3e", "#6f7b86"));
   for (const [x, y] of DECOR) add(x + y, () => drawFindik(x, y, 0, 1, 0));
   for (const c of T.customers) add(c.x + c.y, () => { drawPerson(c.x, c.y, Object.assign({}, c.look, { face: c.face, walk: c.walk, moving: c.moving })); if (c.state === "wait" || c.sad) lab(c.x, c.y, 1, () => bubble(c)); });
@@ -1728,9 +1968,15 @@ function render() {
     const w = T.workers[id];
     add(w.x + w.y, () => drawPerson(w.x, w.y, Object.assign({}, PEOPLE[id], WORKER_EXTRA[id] || {}, { face: w.face, walk: w.walk, moving: w.moving, carry: w.carry })));
   }
-  add(S.px + S.py, () => drawPerson(S.px, S.py, Object.assign({}, PEOPLE.sen, { face: T.face, walk: T.walk, moving: T.moving, carry: S.carry })));
+  add(S.px + S.py, () => {
+    const [a, b] = P(S.px, S.py), q = T.bounce;
+    ctx.save(); ctx.translate(a, b); ctx.scale(1 + q * .08, 1 - q * .12); ctx.translate(-a, -b);
+    drawPerson(S.px, S.py, Object.assign({}, PEOPLE.sen, { face: T.face, walk: T.walk, moving: T.moving, carry: S.carry }));
+    ctx.restore();
+  });
   list.sort((a, b) => a.d - b.d);
   for (const it of list) it.f();
+  drawFx();
   drawTargetMarker(tp);
   flushLabels();
   for (const f of T.floats) {
@@ -1748,9 +1994,9 @@ function render() {
 let DECOR = [];
 function makeDecor() {
   DECOR = [];
-  for (let i = 0; i < 120; i++) {
-    const x = hash(i, 11) * 28, y = 0.5 + hash(13, i) * 26;
-    if (x < 23.3 && y < 20.3) continue;             // oyun alanı ve ileride açılacak bölgeler
+  for (let i = 0; i < 170; i++) {
+    const x = hash(i, 11) * 28, y = 0.5 + hash(13, i) * 33;
+    if (x < 23.3 && y < 27.3) continue;             // oyun alanı ve ileride açılacak bölgeler
     if (y >= ROAD[0] - .3 && y <= ROAD[1] + 1.3) continue;
     DECOR.push([x, y]);
   }
@@ -1765,7 +2011,8 @@ function hud() {
   const cap = capNow();
   $("basketFill").style.width = Math.min(100, S.carry.length / cap * 100) + "%";
   $("basketPill").classList.toggle("full", S.carry.length >= cap);
-  $("moneyTxt").textContent = S.money.toLocaleString("tr-TR");
+  T.shown += (S.money - T.shown) * .18; if (Math.abs(S.money - T.shown) < 1) T.shown = S.money;
+  $("moneyTxt").textContent = Math.round(T.shown).toLocaleString("tr-TR");
   $("repTxt").textContent = Math.round(S.rep);
   $("popTxt").textContent = S.pop;
   let step, text, req = "", pct;
@@ -1773,7 +2020,7 @@ function hud() {
   if (S.done) {
     step = "★"; pct = 100;
     if (CHAPTERS[S.chapter + 1]) { text = "Bölüm " + (S.chapter + 1) + ": " + CHAPTERS[S.chapter + 1].title; req = "Başlamak için dokun"; }
-    else { text = "Faroz kasaba oldu. Hamsi Festivali sürüyor."; req = "Satmaya ve kamyon doldurmaya devam edebilirsin."; }
+    else { text = "Bölüm 5: Fırtına sezonu yakında"; req = "Yayla dönüyor; satmaya ve kamyon doldurmaya devam edebilirsin."; }
   } else {
     const st = STEP();
     step = S.step + 1; text = st.text;
@@ -1838,8 +2085,14 @@ addEventListener("keydown", e => {
 $("menuBtn").addEventListener("click", openMenu);
 $("goal").addEventListener("click", () => { if (S.done && CHAPTERS[S.chapter + 1]) startChapter(S.chapter + 1); });
 function closeSheet() { $("sheetWrap").hidden = true; }
+function ensureShoal(s) {
+  if (!s.crops.some(c => c.fish)) s.crops.push(...shoalCrops());
+  for (const k of PRODUCTS) { if (s.shelf[k] === undefined) s.shelf[k] = 0; if (s.shelfH[k] === undefined) s.shelfH[k] = 0; }
+  for (const id in FAC) if (!s.fac[id]) s.fac[id] = { inp: 0, hand: 0, out: 0, outH: 0, t: 0 };
+  return s;
+}
 function adoptState(s) {
-  S = s; T.workers = {}; T.customers = []; T.boat = { phase: "dock", t: 0 }; T.rev.fill(0);
+  S = ensureShoal(s); T.workers = {}; T.customers = []; T.shown = S.money; T.boat = { phase: "dock", t: 0 }; T.rev.fill(0);
   makeDecor(); unstick(); const [px, py] = P(S.px, S.py); cam.x = px; cam.y = py - 20; save();
 }
 function openMenu() {
@@ -1847,10 +2100,11 @@ function openMenu() {
   joy.on = false;
   $("sheet").innerHTML = `<h2>Faroz</h2>
     <p class="note">Ekranda bir yere bas, parmağını kaydır: yürürsün. Klavyede WASD ya da oklar. Bir karenin üstünde durman yeter. Kendi elinle tesise koyduğundan çıkan mal mühürlüdür (★) ve daha pahalı gider.</p>
-    <div class="menu-list"><button class="btn" id="mResume">Devam et</button><button class="btn light" id="mCode">Kayıt kodu</button><button class="btn red" id="mReset">Baştan başla</button></div>`;
+    <div class="menu-list"><button class="btn" id="mResume">Devam et</button><button class="btn light" id="mSound">${muted ? "Sesi aç" : "Sesi kapat"}</button><button class="btn light" id="mCode">Kayıt kodu</button><button class="btn red" id="mReset">Baştan başla</button></div>`;
   $("sheetWrap").hidden = false;
   $("mResume").onclick = closeSheet;
   $("mCode").onclick = openCode;
+  $("mSound").onclick = () => { muted = !muted; try { localStorage.setItem("faroz.mute", muted ? "1" : "0"); } catch (e) {} if (!muted) audioOn(); openMenu(); };
   $("mReset").onclick = e => {
     const b = e.currentTarget;
     if (!b.dataset.sure) { b.dataset.sure = "1"; b.textContent = "Emin misin? Bir daha dokun"; return; }
@@ -1874,7 +2128,7 @@ function showEnd(ch) {
   save();
   const sold = S.st.sold, next = CHAPTERS[ch + 1];
   const rows = PRODUCTS.filter(k => sold[k]).map(k => `<span>${NAMES[k]}</span><b>${sold[k]}</b>`).join("");
-  const sub = { 1: "İskele işliyor, tütsühane tütüyor, yalının bacası duman salıyor. Hamsi işi artık kendi döner.", 2: "Çay yamacı yeşerdi, köy kalabalıklaştı, çay ocağında Trabzon'un toptancıları konuşuluyor.", 3: "Faroz kasaba oldu. Kamyonlar koli koli tütsülü, çay ve fındık taşıyor. Festival meydanı dolu." }[ch];
+  const sub = { 1: "İskele işliyor, tütsühane tütüyor, yalının bacası duman salıyor. Hamsi işi artık kendi döner.", 2: "Çay yamacı yeşerdi, köy kalabalıklaştı, çay ocağında Trabzon'un toptancıları konuşuluyor.", 3: "Faroz kasaba oldu. Kamyonlar koli koli tütsülü, çay ve fındık taşıyor. Festival meydanı dolu.", 4: "Yayla şenliğinde horon tepildi, dayının sırrı açıldı. Temel'in elinde eski bir anahtar var. Sırada fırtına sezonu." }[ch];
   $("sheet").innerHTML = `<div class="eyebrow">Bölüm ${ch} tamam</div>
     <h2>${CHAPTERS[ch].title}</h2><p>${sub}</p>
     <div class="stats">${rows}<span>Sözleşme</span><b>${S.st.contracts}</b><span>Toplam kazanç</span><b>${S.st.earned.toLocaleString("tr-TR")} ₺</b></div>
@@ -1896,10 +2150,10 @@ function frame(ts) {
 }
 function start(data) {
   const old = hadOldSave();
-  S = (data && data.S && data.S.v === 2) ? data.S : (load() || newState());
-  resize(); makeDecor(); unstick();
+  S = ensureShoal((data && data.S && data.S.v === 2) ? data.S : (load() || newState()));
+  resize(); makeDecor(); unstick(); T.shown = S.money;
   const [px, py] = P(S.px, S.py); cam.x = px; cam.y = py - 20;
-  T.zoom = S.chapter >= 3 ? .82 : 1;
+  T.zoom = S.chapter >= 4 ? .78 : S.chapter >= 3 ? .82 : 1;
   if (old && !S.seen.intro) toast("Oyun yenilendi, baştan başlıyorsun.", 4);
   if (!S.seen.intro) showDialog("intro");
   requestAnimationFrame(frame);

@@ -14,6 +14,10 @@ Bütün değerler `faroz.html` içindeki `CFG` bloğundadır. Süreler, oyunu he
 | Kuru çay (2 yaş çay) | 30 | — | 39 | 51 | 59 |
 | Fındık | 5 | — | — | 9 | — |
 | Kavrulmuş fındık (2 fındık) | 34 | — | — | 58 | 87 |
+| Süt (Bölüm 4, ×2,2) | 6 | — | — | — | 13 |
+| Yayla peyniri (2 süt, ×2,2) | 44 | — | — | — | 97 → mühürlü 145 |
+| Petek (×2,2) | 10 | — | — | — | 22 |
+| Yayla balı (2 petek, ×2,2) | 40 | — | — | — | 88 → mühürlü 132 |
 
 **Koli (Bölüm 3, kamyon):** 5 birim × taban × 2,0 (toptan) × 1,7 (dönem) × (1 + ün/400). Ün 100'deyken bir koli tütsülü ≈ 510 ₺, koli çay ≈ 640 ₺, koli kavrulmuş ≈ 720 ₺. Mühürlü koli ×1,3. Sözleşme tamamlanınca yüklenenin %25'i kadar bahşiş gelir.
 
@@ -37,7 +41,11 @@ Bütün değerler `faroz.html` içindeki `CFG` bloğundadır. Süreler, oyunu he
 | 3 | Rampa · Pakethane · Fındık · Kavurma | 5.000 · 6.500 · 7.500 · 9.000 | |
 | 3 | Hüsnü · İkinci tekne · Market · Cafer | 9.500 · 8.000 · 12.000 · 12.000 | |
 | 3 | **Kapı:** 4 sözleşme ve dakikada 6.000 ₺ | — | |
-| 3 | Hamsi Festivali | 30.000 + 2 mühürlü koli tütsülü | oyun sonu |
+| 3 | Hamsi Festivali | 30.000 + 2 mühürlü koli tütsülü | bölüm sonu |
+| 4 | Yayla yolu · Ahır · Mandıra · Murat | 15.000 · 18.000 · 22.000 · 24.000 | |
+| 4 | Kovanlar · Bal süzme · Dursun · Yayla evi | 26.000 · 28.000 · 30.000 · 32.000 | |
+| 4 | **Kapı:** dakikada 14.000 ₺ | — | yayla da kendi dönüyor mu |
+| 4 | Yayla şenliği | 60.000 + 4 mühürlü peynir | bölüm sonu, dayının sırrı açılır |
 
 **Hedef:** Her alanın bedeli, o dönemdeki dakikalık kazancın 1–3 katı olsun.
 
@@ -48,6 +56,7 @@ Bütün değerler `faroz.html` içindeki `CFG` bloğundadır. Süreler, oyunu he
 | Bölüm 1 başı → sonu | 15 → ~650–980 | 8,2 dk |
 | Bölüm 2 başı → sonu | ~650 → ~2.000–3.000 | 12,1 dk |
 | Bölüm 3 başı → sonu | ~2.300 → ~8.000–9.700 | 17,5 dk |
+| Bölüm 4 başı → sonu | ~3.000 → ~17.000–24.000 | 18,6 dk |
 
 Oyuncu hiçbir şey yapmadan 2 dakika bekletilerek ölçülen otomatik üretim ve satış:
 
