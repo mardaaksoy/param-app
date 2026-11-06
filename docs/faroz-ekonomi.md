@@ -14,10 +14,15 @@ Bütün değerler `faroz.html` içindeki `CFG` bloğundadır. Süreler, oyunu he
 | Kuru çay (2 yaş çay) | 30 | — | 39 | 51 | 59 |
 | Fındık | 5 | — | — | 9 | — |
 | Kavrulmuş fındık (2 fındık) | 34 | — | — | 58 | 87 |
-| Süt (Bölüm 4, ×2,2) | 6 | — | — | — | 13 |
-| Yayla peyniri (2 süt, ×2,2) | 44 | — | — | — | 97 → mühürlü 145 |
-| Petek (×2,2) | 10 | — | — | — | 22 |
-| Yayla balı (2 petek, ×2,2) | 40 | — | — | — | 88 → mühürlü 132 |
+
+Bölüm 4 (yayla sezonu, ×2,2):
+
+| Ürün | Taban | Bölüm 4 | Mühürlü |
+|---|---|---|---|
+| Süt | 6 | 13 | — |
+| Yayla peyniri (2 süt) | 44 | 97 | 145 |
+| Petek | 10 | 22 | — |
+| Yayla balı (2 petek) | 40 | 88 | 132 |
 
 **Koli (Bölüm 3, kamyon):** 5 birim × taban × 2,0 (toptan) × 1,7 (dönem) × (1 + ün/400). Ün 100'deyken bir koli tütsülü ≈ 510 ₺, koli çay ≈ 640 ₺, koli kavrulmuş ≈ 720 ₺. Mühürlü koli ×1,3. Sözleşme tamamlanınca yüklenenin %25'i kadar bahşiş gelir.
 
